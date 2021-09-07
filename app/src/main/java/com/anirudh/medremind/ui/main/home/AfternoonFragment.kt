@@ -15,13 +15,14 @@ import java.util.*
 class AfternoonFragment : Fragment(), OnDateChangeListener  {
     lateinit var viewModel: HomeViewModel
     lateinit var scheduleList: MutableList<ScheduleListModel>
-    private var adapter: ScheduleAdapter?=null
+    private var adapter: ScheduleAdapter? = null
     private var binding: FragmentMorningBinding? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(requireActivity()).get(HomeViewModel::class.java)
         scheduleList = mutableListOf()
+
 
     }
 
@@ -30,6 +31,8 @@ class AfternoonFragment : Fragment(), OnDateChangeListener  {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentMorningBinding.inflate(inflater, container, false)
+        setAdapter()
+        setClickEvents()
         return binding?.root
     }
 
@@ -38,14 +41,12 @@ class AfternoonFragment : Fragment(), OnDateChangeListener  {
     }
 
     private fun loadData(date: Date?) {
-        scheduleList.clear()
 
         viewModel.getSchedules(date!!, "AFTERNOON").observe(requireActivity(), {
+            scheduleList.clear()
             scheduleList.addAll(it)
             if (adapter == null) {
-                adapter = ScheduleAdapter(requireContext(), scheduleList)
-                binding?.recyclerView?.layoutManager = LinearLayoutManager(requireContext())
-                binding?.recyclerView?.adapter = adapter
+                setAdapter()
             } else {
                 adapter?.notifyDataSetChanged()
             }
@@ -54,16 +55,18 @@ class AfternoonFragment : Fragment(), OnDateChangeListener  {
 
     }
 
-    companion object {
-        private const val ARG_DATE = "date"
+    private fun setAdapter() {
+        adapter = ScheduleAdapter(requireContext(), scheduleList)
+        binding?.recyclerView?.layoutManager = LinearLayoutManager(requireContext())
+        binding?.recyclerView?.adapter = adapter
+    }
 
-        @JvmStatic
-        fun newInstance(sectionNumber: Int): MorningFragment {
-            return MorningFragment().apply {
-                arguments = Bundle().apply {
-                    putInt(ARG_DATE, sectionNumber)
-                }
+    private fun setClickEvents() {
+        adapter?.onDoneClickListener = object : ScheduleAdapter.OnDoneClickListener {
+            override fun onDone(scheduleListModel: ScheduleListModel) {
+                viewModel.updateDoneStatus(scheduleListModel)
             }
+
         }
     }
 

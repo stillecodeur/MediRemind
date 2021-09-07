@@ -17,19 +17,23 @@ class ScheduleRepository(
 ) {
 
     init {
-//        appDatabase.sessionDao().deleteTable()
-//        appDatabase.drugDao().deleteTable()
-//        appDatabase.videoDao().deleteTable()
-//        appDatabase.scheduleDao().deleteTable()
-//        GlobalScope.launch {
-//            val scheduleList = retrofitApiService.getScheduleList().body()?.scheduleList
-//            saveSchedulesToDb(scheduleList)
-//        }
+        if (appDatabase.scheduleDao().getRows() == 0) {
+            GlobalScope.launch {
+                val scheduleList = retrofitApiService.getScheduleList().body()?.scheduleList
+                saveSchedulesToDb(scheduleList)
+            }
+        }
     }
 
 
+    fun markScheduleDone(schedule: Schedule) {
+        appDatabase.scheduleDao()
+            .markDone(scId = schedule.scheduleCd, schedule.reminderDate, schedule.session)
+    }
+
     fun getSchedules(date: Date, session: String): LiveData<List<ScheduleListModel>> {
-        return appDatabase.scheduleListModel().getSchedulesList(DateManager().getDateText2(date),session)
+        return appDatabase.scheduleListModel()
+            .getSchedulesList(DateManager().getDateText2(date), session)
     }
 
 
@@ -43,17 +47,18 @@ class ScheduleRepository(
 
             reminderDates.forEach {
                 val dateText = dm.getDateText2(it)
-                val schedule =
-                    Schedule(
-                        scheduleCd,
-                        type,
-                        dateText
-                    )
-                appDatabase.scheduleDao().insertSchedule(schedule)
                 sessions.forEach {
-                    val sessionList = SessionList(scheduleCd, it.session, it.foodContext, dateText)
-                    appDatabase.sessionDao().insertSession(sessionList)
+                    val schedule =
+                        Schedule(
+                            scheduleCd,
+                            type,
+                            it.session,
+                            it.foodContext,
+                            dateText
+                        )
+                    appDatabase.scheduleDao().insertSchedule(schedule)
                 }
+
             }
 
 

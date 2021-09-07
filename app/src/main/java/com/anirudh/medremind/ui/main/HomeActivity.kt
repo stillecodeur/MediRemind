@@ -1,6 +1,7 @@
 package com.anirudh.medremind.ui.main
 
 import android.os.Bundle
+import android.widget.Toast
 import com.google.android.material.tabs.TabLayout
 import androidx.viewpager.widget.ViewPager
 import androidx.appcompat.app.AppCompatActivity
@@ -12,6 +13,7 @@ import com.anirudh.medremind.datemanager.DateManager
 import com.anirudh.medremind.ui.main.home.HomeViewModel
 import com.anirudh.medremind.ui.main.home.HomeViewModelProviderFactory
 import com.anirudh.medremind.ui.main.home.OnDateChangeListener
+import com.anirudh.medremind.utils.AppUtils
 import java.util.*
 
 class HomeActivity : AppCompatActivity() {
@@ -40,7 +42,7 @@ class HomeActivity : AppCompatActivity() {
         val sectionsPagerAdapter = SectionsPagerAdapter(this, supportFragmentManager)
         val viewPager: ViewPager = binding.viewPager
         viewPager.adapter = sectionsPagerAdapter
-        viewPager.offscreenPageLimit=4
+        viewPager.offscreenPageLimit = 4
         val tabs: TabLayout = binding.tabs
         tabs.setupWithViewPager(viewPager)
 
@@ -61,9 +63,18 @@ class HomeActivity : AppCompatActivity() {
 
         binding.imvPreviousDate.setOnClickListener {
             val pd = dm.getPreviousDate()
-            setDateText(pd.day, pd.month)
-            onDateListener.forEach {
-                it.onChange(pd.currentTime)
+            val dtText = dm.getDateText2(pd.currentTime!!)
+            if (AppUtils.isPastDate(dtText)) {
+                Toast.makeText(
+                    this@HomeActivity,
+                    "Past date",
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else {
+                setDateText(pd.day, pd.month)
+                onDateListener.forEach {
+                    it.onChange(pd.currentTime)
+                }
             }
         }
 
@@ -77,7 +88,7 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun createSchedules(date: Date) {
-        val hh=viewModel.getSchedules(date,getString(R.string.morning))
+        val hh = viewModel.getSchedules(date, getString(R.string.morning))
     }
 
     override fun onAttachFragment(fragment: Fragment) {

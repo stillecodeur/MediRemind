@@ -10,7 +10,11 @@ class HomeViewModel(private val scheduleRepository: ScheduleRepository) :
     ViewModel() {
 
 
-    fun getSchedules(date: Date,session:String): LiveData<List<ScheduleListModel>> {
-        return scheduleRepository.getSchedules(date,session)
+    fun getSchedules(date: Date, session: String): LiveData<List<ScheduleListModel>> {
+        return scheduleRepository.getSchedules(date, session)
+    }
+
+    fun updateDoneStatus(sc: ScheduleListModel) {
+        scheduleRepository.markScheduleDone(sc.schedule!!)
     }
 }

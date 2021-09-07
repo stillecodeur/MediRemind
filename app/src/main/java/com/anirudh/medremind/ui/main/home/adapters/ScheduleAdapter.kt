@@ -23,6 +23,7 @@ class ScheduleAdapter(context: Context, list: List<ScheduleListModel>) :
 
     private val context: Context = context
     var list: List<ScheduleListModel> = list
+    var onDoneClickListener: OnDoneClickListener? = null
 
 
     private inner class VideoWatchHolder(itemView: View) :
@@ -34,17 +35,16 @@ class ScheduleAdapter(context: Context, list: List<ScheduleListModel>) :
         fun bind(position: Int) {
             val recyclerViewModel = list[position]
             tvVideoName.text = recyclerViewModel.video?.title
-            Glide.with(context)  //2
-                .load(recyclerViewModel.video?.thumbnail) //3
-                .centerCrop() //4
-                .placeholder(R.drawable.ic_image) //5
-                .error(R.drawable.ic_broken_image) //6
-                .fallback(R.drawable.ic_image) //7
-                .into(imvVideoThumb) //8
+            Glide.with(context)
+                .load(recyclerViewModel.video?.thumbnail)
+                .centerCrop()
+                .placeholder(R.drawable.ic_image)
+                .error(R.drawable.ic_broken_image)
+                .fallback(R.drawable.ic_image)
+                .into(imvVideoThumb)
 
             tvWatch.setOnClickListener {
-                recyclerViewModel.sessionList?.done=true
-                notifyDataSetChanged()
+                onDoneClickListener?.onDone(recyclerViewModel)
             }
         }
     }
@@ -71,8 +71,10 @@ class ScheduleAdapter(context: Context, list: List<ScheduleListModel>) :
             tvMedicineName.text = recyclerViewModel.drug?.brandName
             tvMedicineDose.text = recyclerViewModel.drug?.dose.toString()
             tvMedicineUnit.text = recyclerViewModel.drug?.unit
-            tvMedicineMeal.text = recyclerViewModel.sessionList?.foodContext
-
+            tvMedicineMeal.text = recyclerViewModel.schedule?.foodContext
+            tvTake.setOnClickListener {
+                onDoneClickListener?.onDone(recyclerViewModel)
+            }
         }
     }
 
@@ -112,17 +114,13 @@ class ScheduleAdapter(context: Context, list: List<ScheduleListModel>) :
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val model = list[position]
         if (model.schedule?.type.equals(context.getString(R.string.medicine))) {
-            if (model.sessionList?.done!!) {
+            if (model.schedule?.done!!) {
                 (holder as MedicineTakendHolder).bind(position)
             } else {
                 (holder as MedicineTakeHolder).bind(position)
-                holder.tvTake.setOnClickListener {
-                    list[position].sessionList?.done=true
-                    notifyDataSetChanged()
-                }
             }
         } else if (model.schedule?.type.equals(context.getString(R.string.vod))) {
-            if (model.sessionList?.done!!) {
+            if (model.schedule?.done!!) {
                 (holder as VideoWatchedHolder).bind(position)
             } else {
                 (holder as VideoWatchHolder).bind(position)
@@ -140,18 +138,22 @@ class ScheduleAdapter(context: Context, list: List<ScheduleListModel>) :
         val model = list[position]
         var viewType: Int = 0
         if (model.schedule?.type.equals(context.getString(R.string.medicine))) {
-            if (model.sessionList?.done!!) {
+            if (model.schedule?.done!!) {
                 viewType = VIEW_TYPE_MEDICINE_TAKEN
             } else {
                 viewType = VIEW_TYPE_MEDICINE_TAKE
             }
         } else if (model.schedule?.type.equals(context.getString(R.string.vod))) {
-            if (model.sessionList?.done!!) {
+            if (model.schedule?.done!!) {
                 viewType = VIEW_TYPE_VIDEO_WATCHED
             } else {
                 viewType = VIEW_TYPE_VIDEO_WATCH
             }
         }
         return viewType
+    }
+
+    public interface OnDoneClickListener {
+        fun onDone(scheduleListModel: ScheduleListModel)
     }
 }

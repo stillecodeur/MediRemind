@@ -13,16 +13,17 @@ import com.anirudh.medremind.ui.main.home.adapters.ScheduleAdapter
 import java.util.*
 
 
-class NightFragment : Fragment() , OnDateChangeListener {
+class NightFragment : Fragment(), OnDateChangeListener {
     lateinit var viewModel: HomeViewModel
     lateinit var scheduleList: MutableList<ScheduleListModel>
-    private var adapter: ScheduleAdapter?=null
+    private var adapter: ScheduleAdapter? = null
     private var binding: FragmentMorningBinding? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(requireActivity()).get(HomeViewModel::class.java)
         scheduleList = mutableListOf()
+
 
     }
 
@@ -31,6 +32,8 @@ class NightFragment : Fragment() , OnDateChangeListener {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentMorningBinding.inflate(inflater, container, false)
+        setAdapter()
+        setClickEvents()
         return binding?.root
     }
 
@@ -39,14 +42,12 @@ class NightFragment : Fragment() , OnDateChangeListener {
     }
 
     private fun loadData(date: Date?) {
-        scheduleList.clear()
 
         viewModel.getSchedules(date!!, "NIGHT").observe(requireActivity(), {
+            scheduleList.clear()
             scheduleList.addAll(it)
             if (adapter == null) {
-                adapter = ScheduleAdapter(requireContext(), scheduleList)
-                binding?.recyclerView?.layoutManager = LinearLayoutManager(requireContext())
-                binding?.recyclerView?.adapter = adapter
+                setAdapter()
             } else {
                 adapter?.notifyDataSetChanged()
             }
@@ -55,10 +56,22 @@ class NightFragment : Fragment() , OnDateChangeListener {
 
     }
 
+    private fun setAdapter() {
+        adapter = ScheduleAdapter(requireContext(), scheduleList)
+        binding?.recyclerView?.layoutManager = LinearLayoutManager(requireContext())
+        binding?.recyclerView?.adapter = adapter
+    }
 
+    private fun setClickEvents() {
+        adapter?.onDoneClickListener = object : ScheduleAdapter.OnDoneClickListener {
+            override fun onDone(scheduleListModel: ScheduleListModel) {
+                viewModel.updateDoneStatus(scheduleListModel)
+            }
+
+        }
+    }
 
     override fun onChange(date: Date?) {
         loadData(date)
     }
-
 }

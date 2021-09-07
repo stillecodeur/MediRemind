@@ -1,5 +1,6 @@
 package com.anirudh.medremind.datemanager
 
+import com.anirudh.medremind.utils.ConstantUtils
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -31,10 +32,16 @@ class DateManager() {
         return getDateText(calendar.time)
     }
 
+    fun getYesterDay(): DateParam {
+        calendar.add(Calendar.DATE, -1)
+        current_time = calendar.time
+        return getDateText(calendar.time)
+    }
+
 
     fun getDateText(d: Date): DateParam {
         calendar.time = d
-        var dateFormat = SimpleDateFormat("dd-MMM-yyyy");
+        var dateFormat = SimpleDateFormat(ConstantUtils.DATE_FORMAT);
         var dd = dateFormat.format(calendar.time)
         val arr = dd.split("-")
         return DateParam(arr[0], arr[1],d)
@@ -42,7 +49,7 @@ class DateManager() {
 
     fun getDateText2(d: Date): String {
         calendar.time = d
-        var dateFormat = SimpleDateFormat("dd-MMM-yyyy");
+        var dateFormat = SimpleDateFormat(ConstantUtils.DATE_FORMAT);
         var dd = dateFormat.format(calendar.time)
         return dd
     }

@@ -28,11 +28,6 @@ data class ScheduleListModel(
     @Embedded
     val schedule: Schedule?,
     @Relation(
-        parentColumn = "reminder_date",
-        entityColumn = "reminder_date"
-    )
-    val sessionList: SessionList?,
-    @Relation(
         parentColumn = "schedule_cd",
         entityColumn = "schedule_cd"
     )

@@ -35,6 +35,7 @@ class MorningFragment : Fragment(), OnDateChangeListener {
         viewModel = ViewModelProvider(requireActivity()).get(HomeViewModel::class.java)
         scheduleList = mutableListOf()
 
+
     }
 
     override fun onCreateView(
@@ -42,6 +43,8 @@ class MorningFragment : Fragment(), OnDateChangeListener {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentMorningBinding.inflate(inflater, container, false)
+        setAdapter()
+        setClickEvents()
         return binding?.root
     }
 
@@ -50,23 +53,34 @@ class MorningFragment : Fragment(), OnDateChangeListener {
     }
 
     private fun loadData(date: Date?) {
-        scheduleList.clear()
 
         viewModel.getSchedules(date!!, "MORNING").observe(requireActivity(), {
+            scheduleList.clear()
             scheduleList.addAll(it)
             if (adapter == null) {
-                adapter = ScheduleAdapter(requireContext(), scheduleList)
-                binding?.recyclerView?.layoutManager = LinearLayoutManager(requireContext())
-                binding?.recyclerView?.adapter = adapter
+               setAdapter()
             } else {
                 adapter?.notifyDataSetChanged()
             }
         })
-//        scheduleList.addAll(viewModel.getSchedules(date!!,"MORNING"))
 
 
     }
 
+    private fun setAdapter() {
+        adapter = ScheduleAdapter(requireContext(), scheduleList)
+        binding?.recyclerView?.layoutManager = LinearLayoutManager(requireContext())
+        binding?.recyclerView?.adapter = adapter
+    }
+
+    private fun setClickEvents() {
+        adapter?.onDoneClickListener = object : ScheduleAdapter.OnDoneClickListener {
+            override fun onDone(scheduleListModel: ScheduleListModel) {
+                viewModel.updateDoneStatus(scheduleListModel)
+            }
+
+        }
+    }
 
     override fun onChange(date: Date?) {
         loadData(date)

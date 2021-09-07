@@ -13,6 +13,10 @@ data class Schedule(
     var scheduleCd: String,
     @ColumnInfo(name = "type")
     var type: String,
+    @ColumnInfo(name = "session")
+    var session: String,
+    @ColumnInfo(name = "foodContext")
+    var foodContext: String,
     @ColumnInfo(name = "reminder_date")
     var reminderDate: String,
 ) {
@@ -20,5 +24,7 @@ data class Schedule(
     @ColumnInfo(name = "id")
     var Id: Int? = null
 
+    @ColumnInfo(name = "done")
+    var done: Boolean = false
 
 }

@@ -5,13 +5,11 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.anirudh.medremind.data.ScheduleListModel
 import com.anirudh.medremind.data.ScheduleListModelDao
 import com.anirudh.medremind.data.local.converters.DateConverter
 import com.anirudh.medremind.data.local.converters.SessionListConverter
 import com.anirudh.medremind.data.local.dao.DrugDao
 import com.anirudh.medremind.data.local.dao.ScheduleDao
-import com.anirudh.medremind.data.local.dao.SessionListDao
 import com.anirudh.medremind.data.local.dao.VideoDao
 
 @Database(
@@ -24,7 +22,6 @@ abstract class AppDatabase : RoomDatabase() {
 
     abstract fun drugDao(): DrugDao
     abstract fun videoDao(): VideoDao
-    abstract fun sessionDao(): SessionListDao
     abstract fun scheduleDao(): ScheduleDao
     abstract fun scheduleListModel(): ScheduleListModelDao
 
