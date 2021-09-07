@@ -10,6 +10,9 @@
     <color name="grey_800">#424242</color>
     <color name="grey_700">#616161</color>
     <color name="grey_400">#bdbdbd</color>
+    <color name="grey_300">#e0e0e0</color>
+    <color name="grey_200">#eeeeee</color>
+    <color name="grey_100">#f5f5f5</color>
     <color name="primaryColor">#64b5f6</color>
 
     <color name="primaryLightColor">#9be7ff</color>

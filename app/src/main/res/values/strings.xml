@@ -5,4 +5,8 @@
     <string name="evening">Evening</string>
     <string name="night">Night</string>
     <string name="my_day">My Day</string>
+    <string name="medicine">MEDICINE</string>
+    <string name="vod">VOD</string>
+    <!-- TODO: Remove or change this placeholder text -->
+
 </resources>
