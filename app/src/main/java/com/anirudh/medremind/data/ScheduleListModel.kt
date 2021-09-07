@@ -1,11 +1,9 @@
 package com.anirudh.medremind.data
 
-import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Relation
 import com.anirudh.medremind.data.local.Drug
 import com.anirudh.medremind.data.local.Schedule
-import com.anirudh.medremind.data.local.SessionList
 import com.anirudh.medremind.data.local.Video
 
 //data class ScheduleListModel(

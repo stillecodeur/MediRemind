@@ -7,17 +7,16 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.anirudh.medremind.data.ScheduleListModelDao
 import com.anirudh.medremind.data.local.converters.DateConverter
-import com.anirudh.medremind.data.local.converters.SessionListConverter
 import com.anirudh.medremind.data.local.dao.DrugDao
 import com.anirudh.medremind.data.local.dao.ScheduleDao
 import com.anirudh.medremind.data.local.dao.VideoDao
 
 @Database(
-    entities = arrayOf(Schedule::class, SessionList::class, Drug::class, Video::class),
+    entities = arrayOf(Schedule::class,Drug::class, Video::class),
     version = 1,
     exportSchema = false
 )
-@TypeConverters(DateConverter::class, SessionListConverter::class)
+@TypeConverters(DateConverter::class)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun drugDao(): DrugDao
